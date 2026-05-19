@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock - Multi Timezone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .clock-display {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .timezone-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .timezone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .timezone-card.utc {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .timezone-card.america {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .timezone-card.europe {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .timezone-card.asia {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .timezone-card.australia {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .digital-time {
+            font-size: 3rem;
+            line-height: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .digital-time {
+                font-size: 2rem;
+            }
+        }
+
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .12-hour {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-screen font-sans text-white">
+
+    <!-- Navigation -->
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="text-2xl font-bold text-indigo-400">⏰</div>
+                <span class="text-xl font-bold">WorldTime Clock</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggle24Hour()" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg font-semibold transition text-sm">
+                    <span id="format-btn">Switch to 12h</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Multi-Timezone Digital Clock</h1>
+            <p class="text-gray-400 text-lg">Check current time across different time zones worldwide</p>
+        </div>
+
+        <!-- Local Time Display -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-12 shadow-2xl">
+            <p class="text-gray-200 text-sm uppercase font-semibold tracking-wider mb-2">Your Local Time</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="clock-display digital-time" id="local-time">00:00:00</div>
+                    <p class="text-gray-300 mt-2" id="local-date">Loading...</p>
+                </div>
+                <div class="text-6xl">🌍</div>
+            </div>
+        </div>
+
+        <!-- Timezone Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- UTC -->
+            <div class="timezone-card utc rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Coordinated Universal Time</p>
+                        <p class="text-gray-200 text-sm">UTC +0</p>
+                    </div>
+                    <span class="text-3xl">🌐</span>
+                </div>
+                <div class="clock-display digital-time" id="utc-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="utc-date">Loading...</p>
+            </div>
+
+            <!-- New York -->
+            <div class="timezone-card america rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">New York</p>
+                        <p class="text-gray-200 text-sm">EST / EDT</p>
+                    </div>
+                    <span class="text-3xl">🗽</span>
+                </div>
+                <div class="clock-display digital-time" id="ny-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="ny-date">Loading...</p>
+            </div>
+
+            <!-- Los Angeles -->
+            <div class="timezone-card america rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Los Angeles</p>
+                        <p class="text-gray-200 text-sm">PST / PDT</p>
+                    </div>
+                    <span class="text-3xl">🌴</span>
+                </div>
+                <div class="clock-display digital-time" id="la-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="la-date">Loading...</p>
+            </div>
+
+            <!-- London -->
+            <div class="timezone-card europe rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">London</p>
+                        <p class="text-gray-200 text-sm">GMT / BST</p>
+                    </div>
+                    <span class="text-3xl">🇬🇧</span>
+                </div>
+                <div class="clock-display digital-time" id="london-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="london-date">Loading...</p>
+            </div>
+
+            <!-- Paris -->
+            <div class="timezone-card europe rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Paris</p>
+                        <p class="text-gray-200 text-sm">CET / CEST</p>
+                    </div>
+                    <span class="text-3xl">🇫🇷</span>
+                </div>
+                <div class="clock-display digital-time" id="paris-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="paris-date">Loading...</p>
+            </div>
+
+            <!-- Dubai -->
+            <div class="timezone-card asia rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Dubai</p>
+                        <p class="text-gray-200 text-sm">GST +4</p>
+                    </div>
+                    <span class="text-3xl">🌞</span>
+                </div>
+                <div class="clock-display digital-time" id="dubai-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="dubai-date">Loading...</p>
+            </div>
+
+            <!-- Tokyo -->
+            <div class="timezone-card asia rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Tokyo</p>
+                        <p class="text-gray-200 text-sm">JST +9</p>
+                    </div>
+                    <span class="text-3xl">🗾</span>
+                </div>
+                <div class="clock-display digital-time" id="tokyo-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="tokyo-date">Loading...</p>
+            </div>
+
+            <!-- Singapore -->
+            <div class="timezone-card asia rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Singapore</p>
+                        <p class="text-gray-200 text-sm">SGT +8</p>
+                    </div>
+                    <span class="text-3xl">🌴</span>
+                </div>
+                <div class="clock-display digital-time" id="singapore-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="singapore-date">Loading...</p>
+            </div>
+
+            <!-- Sydney -->
+            <div class="timezone-card australia rounded-2xl p-6 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-gray-100 font-semibold">Sydney</p>
+                        <p class="text-gray-200 text-sm">AEST / AEDT</p>
+                    </div>
+                    <span class="text-3xl">🦘</span>
+                </div>
+                <div class="clock-display digital-time" id="sydney-time">00:00:00</div>
+                <p class="text-gray-200 text-sm mt-2" id="sydney-date">Loading...</p>
+            </div>
+
+        </div>
+
+        <!-- Footer Info -->
+        <div class="mt-12 bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <p class="text-gray-400 text-center text-sm">
+                ⏱️ All times update in real-time. Times shown are accurate to the second.
+            </p>
+        </div>
+    </div>
+
+    <!-- Clock Logic Script -->
+    <script>
+        let is24Hour = true;
+
+        const timezones = [
+            { id: 'local', name: 'Local', offset: null, timeElement: 'local-time', dateElement: 'local-date' },
+            { id: 'utc', name: 'UTC', offset: 0, timeElement: 'utc-time', dateElement: 'utc-date' },
+            { id: 'ny', name: 'America/New_York', offset: 'America/New_York', timeElement: 'ny-time', dateElement: 'ny-date' },
+            { id: 'la', name: 'America/Los_Angeles', offset: 'America/Los_Angeles', timeElement: 'la-time', dateElement: 'la-date' },
+            { id: 'london', name: 'Europe/London', offset: 'Europe/London', timeElement: 'london-time', dateElement: 'london-date' },
+            { id: 'paris', name: 'Europe/Paris', offset: 'Europe/Paris', timeElement: 'paris-time', dateElement: 'paris-date' },
+            { id: 'dubai', name: 'Asia/Dubai', offset: 'Asia/Dubai', timeElement: 'dubai-time', dateElement: 'dubai-date' },
+            { id: 'tokyo', name: 'Asia/Tokyo', offset: 'Asia/Tokyo', timeElement: 'tokyo-time', dateElement: 'tokyo-date' },
+            { id: 'singapore', name: 'Asia/Singapore', offset: 'Asia/Singapore', timeElement: 'singapore-time', dateElement: 'singapore-date' },
+            { id: 'sydney', name: 'Australia/Sydney', offset: 'Australia/Sydney', timeElement: 'sydney-time', dateElement: 'sydney-date' }
+        ];
+
+        function formatTime(date, use24Hour = true) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let seconds = date.getSeconds();
+            let period = '';
+
+            if (!use24Hour) {
+                period = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+            }
+
+            const pad = (num) => num.toString().padStart(2, '0');
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}${period}`;
+        }
+
+        function formatDate(date) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function updateClock() {
+            const now = new Date();
+
+            timezones.forEach(tz => {
+                let displayDate;
+
+                if (tz.id === 'local') {
+                    displayDate = new Date(now);
+                } else if (tz.offset === 0) {
+                    // UTC
+                    displayDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+                } else {
+                    // Use timezone identifier
+                    displayDate = new Date(now.toLocaleString('en-US', { timeZone: tz.offset }));
+                }
+
+                const timeElement = document.getElementById(tz.timeElement);
+                const dateElement = document.getElementById(tz.dateElement);
+
+                if (timeElement) {
+                    timeElement.textContent = formatTime(displayDate, is24Hour);
+                }
+                if (dateElement) {
+                    dateElement.textContent = formatDate(displayDate);
+                }
+            });
+        }
+
+        function toggle24Hour() {
+            is24Hour = !is24Hour;
+            const btn = document.getElementById('format-btn');
+            btn.textContent = is24Hour ? 'Switch to 12h' : 'Switch to 24h';
+            updateClock();
+        }
+
+        // Update clock immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+
+</body>
+</html>
