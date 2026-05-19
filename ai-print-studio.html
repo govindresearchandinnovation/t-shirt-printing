@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI T-Shirt Print Studio & Order Manager</title>
+    <!-- Tailwind CSS for modern layouts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .slide-fade { display: none; }
+        .slide-fade.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 scroll-smooth">
+
+    <!-- NAVIGATION HEADER -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <span class="text-xl font-black text-indigo-600 tracking-wider">PRINT<span class="text-slate-800">CRAFT.AI</span></span>
+            <div class="flex gap-4">
+                <a href="#customizer-section" class="text-sm font-medium text-slate-600 hover:text-indigo-600 self-center">Design Studio</a>
+                <a href="#admin-portal" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold tracking-wide hover:bg-slate-800 transition">Admin Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECTION 1: AUTOMATED 2-SECOND DESIGN CAROUSEL HERO -->
+    <header class="bg-white py-12 border-b border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Trending Mockups</span>
+            <h1 class="text-3xl md:text-4xl font-extrabold mt-3 tracking-tight">Our Premium Ready-Made Prints</h1>
+            
+            <!-- Slideshow Container -->
+            <div class="mt-8 relative max-w-sm mx-auto bg-slate-100 rounded-2xl p-6 shadow-md border border-slate-200">
+                <!-- Slide 1 -->
+                <div class="slide-fade active text-center">
+                    <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80" alt="Cyberpunk Print" class="mx-auto rounded-xl object-cover h-64 w-full">
+                    <h3 class="mt-4 font-bold text-lg text-slate-800">Neon Cyberpunk Edition</h3>
+                </div>
+                <!-- Slide 2 -->
+                <div class="slide-fade text-center">
+                    <img src="https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=400&q=80" alt="Minimalist Art" class="mx-auto rounded-xl object-cover h-64 w-full">
+                    <h3 class="mt-4 font-bold text-lg text-slate-800">Minimalist Tokyo Wave</h3>
+                </div>
+                <!-- Slide 3 -->
+                <div class="slide-fade text-center">
+                    <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=400&q=80" alt="Vintage Retro" class="mx-auto rounded-xl object-cover h-64 w-full">
+                    <h3 class="mt-4 font-bold text-lg text-slate-800">Vintage Renaissance Acid Wash</h3>
+                </div>
+            </div>
+            
+            <p class="text-slate-500 text-sm mt-6 animate-pulse">Scroll down to build your custom piece ↓</p>
+        </div>
+    </header>
+
+    <!-- SECTION 2: INTERACTIVE CUSTOMIZER STUDIO -->
+    <section id="customizer-section" class="py-16 max-w-6xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-extrabold tracking-tight">Customize Your T-Shirt in Minutes</h2>
+            <p class="text-slate-600 mt-2">Pick your fabric, drop a mock layout image, or let our mockup engine expand your thoughts.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+            <!-- Left Side: Interactive Canvas Visualizer -->
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center min-h-[450px]">
+                <div id="tshirt-canvas-container" class="relative w-72 h-80 bg-slate-200 rounded-xl flex items-center justify-center transition-colors duration-300">
+                    <!-- Shirt SVG Mask Template -->
+                    <svg class="absolute inset-0 w-full h-full text-slate-400 fill-current opacity-20" viewBox="0 0 24 24">
+                        <path d="M18 2h-3s-1 1-3 1-3-1-3-1H6L2 6v4h3v12h14V10h3V6l-4-4z"/>
+                    </svg>
+                    
+                    <!-- Inside Design Print Frame -->
+                    <div class="absolute w-36 h-48 border border-dashed border-slate-400 top-20 flex flex-col items-center justify-center overflow-hidden bg-white/60 p-2 rounded">
+                        <img id="canvas-image-preview" class="max-w-full max-h-full object-contain hidden" alt="Custom Print Preview">
+                        <p id="canvas-placeholder-text" class="text-[10px] text-slate-400 font-medium text-center uppercase tracking-wider">Your Design Area</p>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <span id="shirt-badge-color" class="text-xs font-bold uppercase text-slate-500">Fabric Selection: Off-White</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Configuration System Controls -->
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-8">
+                <!-- STEP A: CHOOSE COLOR -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Step 1: Select T-Shirt Color</label>
+                    <div class="flex gap-3">
+                        <button onclick="setShirtColor('#f8fafc', 'Off-White')" class="w-10 h-10 rounded-full bg-slate-100 border-2 border-indigo-600 focus:outline-none" title="White"></button>
+                        <button onclick="setShirtColor('#0f172a', 'Midnight Black')" class="w-10 h-10 rounded-full bg-slate-900 focus:outline-none" title="Black"></button>
+                        <button onclick="setShirtColor('#ef4444', 'Crimson Red')" class="w-10 h-10 rounded-full bg-red-500 focus:outline-none" title="Red"></button>
+                        <button onclick="setShirtColor('#3b82f6', 'Royal Blue')" class="w-10 h-10 rounded-full bg-blue-500 focus:outline-none" title="Blue"></button>
+                    </div>
+                </div>
+
+                <!-- STEP B: FILE UPLOADER -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Step 2: Upload Reference Image or Branding Logo</label>
+                    <input type="file" id="user-image-upload" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                </div>
+
+                <!-- STEP C: AI PROMPT ASSISTANT GENERATOR -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Step 3: AI Asset Image Expansion Prompt</label>
+                    <textarea id="ai-prompt-input" rows="2" class="w-full text-sm border border-slate-200 rounded-xl p-3 focus:outline-none focus:border-indigo-500" placeholder="Type what you want to add (e.g., 'A futuristic golden astronaut sitting on mars, cyberpunk vector art'...)"></textarea>
+                    <button onclick="simulateAiGeneration()" class="mt-2 w-full bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-700 transition">Run AI Graphic Engine Mockup</button>
+                </div>
+
+                <!-- STEP D: SUBMIT ORDER PIPELINE -->
+                <div class="pt-4 border-t border-slate-100">
+                    <button onclick="submitOrder()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">Submit Blueprint to Manufacturing Queue</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ADMINISTRATIVE SYSTEM CONTROL PANEL PORTAL -->
+    <section id="admin-portal" class="bg-slate-900 py-16 text-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-wrap justify-between items-center mb-8 gap-4">
+                <div>
+                    <h2 class="text-2xl font-black tracking-tight">Admin Manufacturing Queue Portal</h2>
+                    <p class="text-xs text-slate-400 mt-1">Review parameters, download user assets, and manage order fulfillment states.</p>
+                </div>
+                <div class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 text-right">
+                    <span class="text-xs block text-slate-400 uppercase font-mono">Live Logs Connection</span>
+                    <span class="text-xs text-emerald-400 font-bold font-mono">● System Online</span>
+                </div>
+            </div>
+
+            <!-- Orders Live Table Grid -->
+            <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 text-slate-400 uppercase font-mono text-[11px] tracking-wider border-b border-slate-700">
+                                <th class="p-4">Order ID</th>
+                                <th class="p-4">Fabric Palette</th>
+                                <th class="p-4">Graphic Source Target</th>
+                                <th class="p-4">AI Concept Blueprint Prompt</th>
+                                <th class="p-4">Pipeline Action Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-tbody" class="text-sm divide-y divide-slate-700/50">
+                            <!-- Baseline Starter Demo Seed Rows for UI Visual Continuity -->
+                            <tr>
+                                <td class="p-4 font-mono text-xs text-slate-400">#ORD-9081</td>
+                                <td class="p-4"><span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-xs">Midnight Black</span></td>
+                                <td class="p-4 text-xs text-slate-400 font-mono">Local_Asset_Logo.png</td>
+                                <td class="p-4 text-xs italic text-slate-400">"Retro 80s neon typography overlays"</td>
+                                <td class="p-4"><span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">Pending Print</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER SUMMARY LOGISTICS -->
+    <footer class="bg-slate-950 py-6 border-t border-slate-800 text-center text-xs text-slate-600">
+        <p>© 2026 PrintCraft AI Fulfillment Engines. System Architecture Standard Distribution.</p>
+    </footer>
+
+    <!-- INTERACTIVE SCRIPTS CODE LAYER ENGINE -->
+    <script>
+        // --- 1. SLIDESHOW AUTOMATED ROTATION SYSTEM ---
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide-fade');
+
+        function rotateSlides() {
+            slides[currentSlideIndex].classList.remove('active');
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            slides[currentSlideIndex].classList.add('active');
+        }
+        // Set automated interval execution to exactly 2 seconds (2000 milliseconds)
+        setInterval(rotateSlides, 2000);
+
+
+        // --- 2. APPAREL DESIGN CUSTOMIZER VARIABLES & EVENTS ---
+        let activeSelectedColorName = "Off-White";
+        let activeSelectedColorHex = "#f8fafc";
+        let targetUploadedImageBase64 = null;
+
+        const tshirtCanvasContainer = document.getElementById('tshirt-canvas-container');
+        const shirtBadgeColor = document.getElementById('shirt-badge-color');
+        const userImageUpload = document.getElementById('user-image-upload');
+        const canvasImagePreview = document.getElementById('canvas-image-preview');
+        const canvasPlaceholderText = document.getElementById('canvas-placeholder-text');
+        const aiPromptInput = document.getElementById('ai-prompt-input');
+        const adminOrdersTbody = document.getElementById('admin-orders-tbody');
+
+        // Color Setter Callback Engine
+        function setShirtColor(hex, colorName) {
+            activeSelectedColorHex = hex;
+            activeSelectedColorName = colorName;
+            tshirtCanvasContainer.style.backgroundColor = hex;
+            shirtBadgeColor.textContent = `Fabric Selection: ${colorName}`;
+        }
+
+        // Handle structural file image data mapping locally 
+        userImageUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    targetUploadedImageBase64 = event.target.result;
+                    renderGraphicOnCanvas(targetUploadedImageBase64);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function renderGraphicOnCanvas(imageSrc) {
+            canvasImagePreview.src = imageSrc;
+            canvasImagePreview.classList.remove('hidden');
+            canvasPlaceholderText.classList.add('hidden');
+        }
+
+        // --- 3. SIMULATED AI GENERATION ENGINE ---
+        function simulateAiGeneration() {
+            const promptText = aiPromptInput.value.trim();
+            if (!promptText) {
+                alert("Please type an explicit text prompt instructions for the AI model first.");
+                return;
+            }
+            
+            // Simulating an external API render callback delay visually
+            canvasPlaceholderText.textContent = "GENERATING ART VIA AI...";
+            canvasPlaceholderText.classList.remove('hidden');
+            canvasImagePreview.classList.add('hidden');
+
+            setTimeout(() => {
+                // Return a beautiful synthetic stock photography design variant corresponding to prompt submission 
+                const mockGeneratedImages = [
+                    "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=300&q=80",
+                    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
+                    "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=300&q=80"
+                ];
+                // Select a random image to simulate content creation variations
+                const randomChoice = mockGeneratedImages[Math.floor(Math.random() * mockGeneratedImages.length)];
+                targetUploadedImageBase64 = randomChoice;
+                renderGraphicOnCanvas(randomChoice);
+            }, 1200);
+        }
+
+        // --- 4. BACKEND CONTEXT ROUTING SIMULATOR (SUBMIT TO ADMIN QUEUE) ---
+        function submitOrder() {
+            const promptValue = aiPromptInput.value.trim() || "None Provided";
+            const graphicName = userImageUpload.files[0] ? userImageUpload.files[0].name : (targetUploadedImageBase64 ? "AI Generated Asset Canvas" : "Blank Canvas");
+            
+            const uniqueOrderId = `#ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            // Create a structured row injection layout directly tracking components 
+            const newOrderRowMarkup = `
+                <tr class="hover:bg-slate-800/40 transition">
+                    <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${uniqueOrderId}</td>
+                    <td class="p-4"><span class="px-2 py-1 rounded bg-slate-900 border border-slate-700 text-xs text-white">${activeSelectedColorName}</span></td>
+                    <td class="p-4 text-xs text-slate-300 font-mono">${graphicName}</td>
+                    <td class="p-4 text-xs italic text-slate-300">"${promptValue}"</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Received</span>
+                            <button onclick="this.closest('tr').remove()" class="text-xs text-rose-400 hover:text-rose-300 underline underline-offset-4 ml-2">Fulfill/Archive</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            // Inject the order data immediately into the Admin Panel table
+            adminOrdersTbody.insertAdjacentHTML('afterbegin', newOrderRowMarkup);
+            alert(`Success! Order ${uniqueOrderId} sent directly down to the Admin Dashboard Processing Queue below.`);
+        }
+    </script>
+</body>
+</html>
