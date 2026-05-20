@@ -3,76 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintCraft.AI | Secure Factory Administration Portal</title>
+    <title>PrintCraft.AI | Factory Ingestion System</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 font-sans text-slate-100 min-h-screen">
 
-    <!-- BLOCK A: AUTHENTICATION CONTAINER WINDOW -->
-    <div id="auth-gate-wrapper" class="max-w-md mx-auto pt-24 px-4">
+    <!-- REMODELLED SIMPLIFIED GATEKEEPER SIGN IN FORM WINDOW -->
+    <div id="auth-gate-wrapper" class="max-w-md mx-auto pt-28 px-4">
         <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
             <div class="text-center mb-6">
-                <span class="text-indigo-400 text-xs tracking-widest font-mono uppercase font-bold">System Gatekeeper</span>
-                <h1 class="text-2xl font-black mt-1">Admin Panel Access</h1>
+                <span class="text-indigo-400 text-xs tracking-widest font-mono uppercase font-bold">Authorized Operations Index</span>
+                <h1 class="text-2xl font-black mt-1">Management Login</h1>
             </div>
 
-            <!-- Interactive Tab Selectors -->
-            <div class="flex border-b border-slate-800 mb-6">
-                <button onclick="switchAuthTab('login')" id="tab-login-btn" class="flex-1 pb-3 text-sm font-bold border-b-2 border-indigo-500 text-white">Sign In</button>
-                <button onclick="switchAuthTab('register')" id="tab-register-btn" class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-300">Create Account</button>
-            </div>
-
-            <!-- Form Validation Framework Wrapper -->
-            <form id="auth-form" onsubmit="handleAuthSubmission(event)" class="space-y-4">
+            <form onsubmit="handleAdminLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Username</label>
-                    <input type="text" id="auth-username" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Operator Username</label>
+                    <input type="text" id="admin-user" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Password</label>
-                    <input type="password" id="auth-password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Operator Password</label>
+                    <input type="password" id="admin-pass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
                 </div>
-                <button type="submit" id="auth-submit-action-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm tracking-wide transition mt-2">
-                    Authenticate Identity
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm tracking-wide transition mt-2">
+                    Establish Portal Session
                 </button>
             </form>
-            <p id="auth-feedback-logs" class="text-xs font-mono text-center mt-4 text-rose-400 hidden"></p>
+            <p id="auth-error-logs" class="text-xs font-mono text-center mt-4 text-rose-400 hidden"></p>
         </div>
     </div>
 
-    <!-- BLOCK B: ACTUAL PROTECTED PRODUCTION MANAGEMENT ZONE -->
+    <!-- PROTECTED PRODUCTION PANEL VIEWS -->
     <main id="protected-admin-dashboard" class="hidden">
         <nav class="bg-slate-900 border-b border-slate-800 h-16 px-6 flex items-center justify-between shadow-md">
-            <div class="flex items-center gap-3">
-                <span class="text-sm font-mono tracking-widest bg-slate-950 px-3 py-1 rounded-md text-indigo-400 border border-slate-800">ADMIN CONTROL UNIT</span>
-            </div>
-            <button onclick="logOutAdminSession()" class="text-xs text-slate-400 hover:text-rose-400 transition underline underline-offset-4 font-mono">Terminate Session [Logout]</button>
+            <span class="text-sm font-mono tracking-widest bg-slate-950 px-3 py-1 rounded text-indigo-400 border border-slate-800">FACTORY PRODUCTION HUB</span>
+            <button onclick="terminateSession()" class="text-xs text-slate-400 hover:text-rose-400 transition font-mono underline underline-offset-4">Sign Out</button>
         </nav>
 
         <div class="max-w-7xl mx-auto px-6 py-10 space-y-8">
             <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
                 <div>
-                    <h2 class="text-xl font-black">Live Production Ingestion Streams</h2>
-                    <p class="text-xs text-slate-400 mt-1">This panel analyzes custom printing request text prompt strings using the Gemini API model to detect print complexities automatically.</p>
+                    <h2 class="text-xl font-black">Paid Order Manufacturing Matrix</h2>
+                    <p class="text-xs text-slate-400 mt-1">Incoming items automatically execute prompt asset optimization tracking metrics via Gemini neural APIs.</p>
                 </div>
-                <button onclick="loadIngestedOrders()" class="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-mono">Sync & Fetch Incoming Orders</button>
+                <button onclick="syncFulfillmentQueue()" class="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-mono">Sync Local Database</button>
             </div>
 
-            <!-- Orders Management Grid Workspace -->
+            <!-- MANUFACTURING DATAGRID CONTAINER -->
             <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-950 text-slate-400 font-mono text-[11px] uppercase border-b border-slate-800">
                                 <th class="p-4">Batch Reference ID</th>
-                                <th class="p-4">Itemized T-Shirt List Configs</th>
-                                <th class="p-4">AI Ingestion Assessment Insight (Gemini Engine)</th>
+                                <th class="p-4">Fulfillment Configurations List</th>
+                                <th class="p-4">Finances / Settlement Channel</th>
+                                <th class="p-4">AI Ingestion Insight (Gemini Engine)</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="production-queue-tbody" class="text-sm divide-y divide-slate-800/60">
+                        <tbody id="factory-queue-tbody" class="text-sm divide-y divide-slate-800/60">
                             <tr>
-                                <td class="p-4 text-slate-500 italic font-mono" colspan="4 text-center">Click Sync to fetch the active local order pipeline database items...</td>
+                                <td class="p-4 text-slate-500 italic font-mono" colspan="5 text-center">Sync data tracking repositories...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -81,177 +73,104 @@
         </div>
     </main>
 
-    <!-- CORE FUNCTIONAL CONTROL LOGIC LAYER -->
     <script>
-        // --- 1. ADMIN USER REGISTRATION & AUTHENTICATION SYSTEMS (LOCAL STORAGE SEED) ---
-        let currentAuthMode = 'login';
-
-        function switchAuthTab(mode) {
-            currentAuthMode = mode;
-            const loginBtn = document.getElementById('tab-login-btn');
-            const registerBtn = document.getElementById('tab-register-btn');
-            const actionBtn = document.getElementById('auth-submit-action-btn');
-            
-            if (mode === 'login') {
-                loginBtn.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-indigo-500 text-white";
-                registerBtn.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-300";
-                actionBtn.textContent = "Sign In to Dashboard";
-            } else {
-                registerBtn.className = "flex-1 pb-3 text-sm font-bold border-b-2 border-indigo-500 text-white";
-                loginBtn.className = "flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-300";
-                actionBtn.textContent = "Register New Account Admin";
-            }
-        }
-
-        function handleAuthSubmission(e) {
+        // Baseline Credentials Guard
+        function handleAdminLogin(e) {
             e.preventDefault();
-            const userVal = document.getElementById('auth-username').value.trim();
-            const passVal = document.getElementById('auth-password').value.trim();
-            const feedback = document.getElementById('auth-feedback-logs');
-            feedback.classList.add('hidden');
+            const u = document.getElementById('admin-user').value.trim();
+            const p = document.getElementById('admin-pass').value.trim();
+            const err = document.getElementById('auth-error-logs');
+            err.classList.add('hidden');
 
-            // Initialize user storage arrays if empty
-            const credentialRegistry = JSON.parse(localStorage.getItem('admin_registry') || '{"admin":"admin123"}');
-
-            if (currentAuthMode === 'register') {
-                if (credentialRegistry[userVal]) {
-                    feedback.textContent = "Error: Username variant already claimed inside registration index.";
-                    feedback.classList.remove('hidden');
-                    return;
-                }
-                credentialRegistry[userVal] = passVal;
-                localStorage.setItem('admin_registry', JSON.stringify(credentialRegistry));
-                alert("Account created successfully! Switching over to your signature portal log-in access.");
-                switchAuthTab('login');
+            if(u === 'admin' && p === 'admin1208') {
+                document.getElementById('auth-gate-wrapper').classList.add('hidden');
+                document.getElementById('protected-admin-dashboard').classList.remove('hidden');
+                syncFulfillmentQueue();
             } else {
-                // Login Verification Check
-                if (credentialRegistry[userVal] && credentialRegistry[userVal] === passVal) {
-                    document.getElementById('auth-gate-wrapper').classList.add('hidden');
-                    document.getElementById('protected-admin-dashboard').classList.remove('hidden');
-                    loadIngestedOrders();
-                } else {
-                    feedback.textContent = "Access Denied: Invalid credentials.";
-                    feedback.classList.remove('hidden');
-                }
+                err.textContent = "Access Forbidden: Invalid credential tracking profiles.";
+                err.classList.remove('hidden');
             }
         }
 
-        function logOutAdminSession() {
+        function terminateSession() {
             document.getElementById('protected-admin-dashboard').classList.add('hidden');
             document.getElementById('auth-gate-wrapper').classList.remove('hidden');
-            document.getElementById('auth-username').value = "";
-            document.getElementById('auth-password').value = "";
+            document.getElementById('admin-user').value = "";
+            document.getElementById('admin-pass').value = "";
         }
 
-
-        // --- 2. RAW ORDER MANAGEMENT PIPELINE & INTELLIGENT INGESTION ANALYSIS ---
-        
-        // Enter your Google AI Studio API key here to connect your pipeline to the Gemini model network
+        // Live API Communication Model Configuration Block
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
 
-        async function analyzePromptComplexityWithGemini(promptText) {
-            if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                return `<span class="text-amber-400 font-mono text-xs">[Gemini Key Missing]</span>`;
+        async function queryGeminiApiFulfillment(prompt) {
+            if(!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+                return `<span class="text-amber-500 text-xs font-mono">[Key Missing]</span>`;
             }
-
-            const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-            
-            // Construct a specialized system parsing prompt instructions structure
-            const structuredPayload = {
-                contents: [{
-                    parts: [{
-                        text: `You are an expert printing factory sorting assistant. Analyze this custom apparel print text prompt and respond with exactly one sentence recommending either "Screen Printing" (if simple typography or few solid flat colors) or "Direct-to-Garment DTG" (if high gradients, photographic traits, intricate cosmic art or complex illustration details). Be concise. Prompt to analyze: "${promptText}"`
-                    }]
-                }]
-            };
-
             try {
-                const response = await fetch(endpointUrl, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(structuredPayload)
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate if this design prompt needs high color resolution Direct-to-Garment (DTG) execution or standard flat screen printing setup in one fast short sentence. Prompt: "${prompt}"` }] }] })
                 });
-                const parsedResponseData = await response.json();
-                return parsedResponseData.candidates[0].content.parts[0].text;
-            } catch (networkError) {
-                console.error(networkError);
-                return `<span class="text-rose-400 font-mono text-xs">[Gemini API Parsing Error]</span>`;
+                const data = await res.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch {
+                return `<span class="text-rose-400 text-xs font-mono">[API Error]</span>`;
             }
         }
 
-        async function loadIngestedOrders() {
-            const queueTableBody = document.getElementById('production-queue-tbody');
-            const ordersList = JSON.parse(localStorage.getItem('print_orders') || '[]');
+        async function syncFulfillmentQueue() {
+            const tbody = document.getElementById('factory-queue-tbody');
+            const targetList = JSON.parse(localStorage.getItem('print_orders') || '[]');
 
-            if (ordersList.length === 0) {
-                queueTableBody.innerHTML = `
-                    <tr>
-                        <td class="p-8 text-slate-500 italic font-mono text-center" colspan="4">
-                            No processing items currently logged within the localStorage database registry tracking index.
-                        </td>
-                    </tr>`;
+            if(targetList.length === 0) {
+                tbody.innerHTML = `<tr><td class="p-8 text-slate-500 text-center italic font-mono" colspan="5">No paid order jobs currently queued inside storage indexes.</td></tr>`;
                 return;
             }
 
-            queueTableBody.innerHTML = `
-                <tr>
-                    <td class="p-8 text-indigo-400 font-mono text-xs animate-pulse text-center" colspan="4">
-                        Consulting Gemini Deep Learning Engines to process order complexities...
-                    </td>
-                </tr>`;
+            tbody.innerHTML = `<tr><td class="p-8 text-indigo-400 text-center font-mono animate-pulse" colspan="5">Analyzing incoming order specifications via Gemini model array hubs...</td></tr>`;
+            
+            let rowAccumulator = "";
+            for(let i=0; i<targetList.length; i++) {
+                const batch = targetList[i];
+                let itemConfigsHtml = "";
+                let aiAssessmentsHtml = "";
 
-            let accumulatedHtmlRowsMarkup = "";
-
-            // Loop through all custom batches
-            for (let i = 0; i < ordersList.length; i++) {
-                const batch = ordersList[i];
-                
-                let orderItemsSublistHtml = "";
-                let geminiAnalysisReportOutputs = "";
-
-                // Process internal item details
-                for (let j = 0; j < batch.items.length; j++) {
-                    const singleShirtItem = batch.items[j];
-                    orderItemsSublistHtml += `
-                        <div class="text-xs text-slate-300 border-b border-slate-800/40 pb-1 mb-1">
-                            <span class="text-indigo-400 font-bold font-mono">1x</span> 
-                            <span class="bg-slate-950 px-1 py-0.5 rounded text-[11px] text-white border border-slate-800 font-medium">${singleShirtItem.color}</span>
-                            - File: <span class="font-mono text-[11px] text-slate-400">${singleShirtItem.asset}</span>
-                            <p class="text-slate-400 italic mt-0.5 ml-5">"${singleShirtItem.prompt}"</p>
+                for(let j=0; j<batch.items.length; j++) {
+                    const item = batch.items[j];
+                    itemConfigsHtml += `
+                        <div class="text-xs text-slate-300 pb-1 mb-1 border-b border-slate-800/50">
+                            <span class="text-indigo-400 font-bold font-mono">1x</span> [${item.color}] <br>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">Prompt: "${item.prompt}"</span>
                         </div>
                     `;
-
-                    // Chain live Gemini lookup processes asynchronously for text prompts
-                    const aiFulfillmentRecommendation = await analyzePromptComplexityWithGemini(singleShirtItem.prompt);
-                    geminiAnalysisReportOutputs += `
-                        <div class="text-xs text-indigo-200 bg-indigo-950/30 border border-indigo-900/30 rounded-lg p-2 font-serif mb-1">
-                            ${aiFulfillmentRecommendation}
-                        </div>
-                    `;
+                    const aiReport = await queryGeminiApiFulfillment(item.prompt);
+                    aiAssessmentsHtml += `<div class="p-1.5 bg-indigo-950/20 border border-indigo-900/30 rounded text-xs mb-1">${aiReport}</div>`;
                 }
 
-                accumulatedHtmlRowsMarkup += `
-                    <tr class="hover:bg-slate-900/40 transition align-top">
-                        <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${batch.id}<br><span class="text-[10px] text-slate-500 font-normal font-sans block mt-1">${batch.timestamp}</span></td>
-                        <td class="p-4">${orderItemsSublistHtml}</td>
-                        <td class="p-4">${geminiAnalysisReportOutputs}</td>
+                rowAccumulator += `
+                    <tr class="hover:bg-slate-900/30 align-top">
+                        <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${batch.id}<br><span class="text-[10px] text-slate-500 font-sans font-normal block mt-1">${batch.timestamp}</span></td>
+                        <td class="p-4">${itemConfigsHtml}</td>
+                        <td class="p-4">
+                            <span class="block font-black text-white text-xs">${batch.totalPrice}</span>
+                            <span class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-950 border border-slate-800 text-slate-400 rounded block mt-1 w-max">${batch.paymentChannel}</span>
+                        </td>
+                        <td class="p-4">${aiAssessmentsHtml}</td>
                         <td class="p-4 text-right">
-                            <button onclick="purgeArchivedOrderElement(${i})" class="text-xs font-mono text-emerald-400 hover:text-emerald-300 bg-emerald-950/40 border border-emerald-900/60 px-3 py-1.5 rounded-lg transition">
-                                Mark Dispatched ✓
-                            </button>
+                            <button onclick="dispatchOrderBatch(${i})" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/40 px-2.5 py-1.5 rounded-lg hover:bg-emerald-900/40 transition">Fulfill ✓</button>
                         </td>
                     </tr>
                 `;
             }
-
-            queueTableBody.innerHTML = accumulatedHtmlRowsMarkup;
+            tbody.innerHTML = rowAccumulator;
         }
 
-        function purgeArchivedOrderElement(targetIndexIndex) {
-            const currentOrdersList = JSON.parse(localStorage.getItem('print_orders') || '[]');
-            currentOrdersList.splice(targetIndexIndex, 1);
-            localStorage.setItem('print_orders', JSON.stringify(currentOrdersList));
-            loadIngestedOrders();
+        function dispatchOrderBatch(idx) {
+            const list = JSON.parse(localStorage.getItem('print_orders') || '[]');
+            list.splice(idx, 1);
+            localStorage.setItem('print_orders', JSON.stringify(list));
+            syncFulfillmentQueue();
         }
     </script>
 </body>
