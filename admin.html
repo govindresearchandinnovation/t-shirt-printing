@@ -8,7 +8,7 @@
 </head>
 <body class="bg-slate-950 font-sans text-slate-100 min-h-screen">
 
-    <!-- REMODELLED SIMPLIFIED GATEKEEPER SIGN IN FORM WINDOW -->
+    <!-- LOGIN PANEL GATE (NO REGISTER INTERFACE) -->
     <div id="auth-gate-wrapper" class="max-w-md mx-auto pt-28 px-4">
         <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
             <div class="text-center mb-6">
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <!-- PROTECTED PRODUCTION PANEL VIEWS -->
+    <!-- PROTECTED PRODUCTION HUB DIAL -->
     <main id="protected-admin-dashboard" class="hidden">
         <nav class="bg-slate-900 border-b border-slate-800 h-16 px-6 flex items-center justify-between shadow-md">
             <span class="text-sm font-mono tracking-widest bg-slate-950 px-3 py-1 rounded text-indigo-400 border border-slate-800">FACTORY PRODUCTION HUB</span>
@@ -44,27 +44,27 @@
             <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
                 <div>
                     <h2 class="text-xl font-black">Paid Order Manufacturing Matrix</h2>
-                    <p class="text-xs text-slate-400 mt-1">Incoming items automatically execute prompt asset optimization tracking metrics via Gemini neural APIs.</p>
+                    <p class="text-xs text-slate-400 mt-1">Live updates showing paid items along with their verified Amazon shipping destination structures.</p>
                 </div>
                 <button onclick="syncFulfillmentQueue()" class="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-mono">Sync Local Database</button>
             </div>
 
-            <!-- MANUFACTURING DATAGRID CONTAINER -->
+            <!-- MANUFACTURING DATAGRID -->
             <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-950 text-slate-400 font-mono text-[11px] uppercase border-b border-slate-800">
                                 <th class="p-4">Batch Reference ID</th>
-                                <th class="p-4">Fulfillment Configurations List</th>
-                                <th class="p-4">Finances / Settlement Channel</th>
-                                <th class="p-4">AI Ingestion Insight (Gemini Engine)</th>
+                                <th class="p-4">Fulfillment Garment Build Specs</th>
+                                <th class="p-4">Amazon Logistics Destination Address</th>
+                                <th class="p-4">Finances / Settlement</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="factory-queue-tbody" class="text-sm divide-y divide-slate-800/60">
                             <tr>
-                                <td class="p-4 text-slate-500 italic font-mono" colspan="5 text-center">Sync data tracking repositories...</td>
+                                <td class="p-4 text-slate-500 italic font-mono" colspan="5 text-center">Sync data repositories...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -74,7 +74,6 @@
     </main>
 
     <script>
-        // Baseline Credentials Guard
         function handleAdminLogin(e) {
             e.preventDefault();
             const u = document.getElementById('admin-user').value.trim();
@@ -87,7 +86,7 @@
                 document.getElementById('protected-admin-dashboard').classList.remove('hidden');
                 syncFulfillmentQueue();
             } else {
-                err.textContent = "Access Forbidden: Invalid credential tracking profiles.";
+                err.textContent = "Access Forbidden: Invalid credential records.";
                 err.classList.remove('hidden');
             }
         }
@@ -99,70 +98,45 @@
             document.getElementById('admin-pass').value = "";
         }
 
-        // Live API Communication Model Configuration Block
-        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
-
-        async function queryGeminiApiFulfillment(prompt) {
-            if(!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                return `<span class="text-amber-500 text-xs font-mono">[Key Missing]</span>`;
-            }
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate if this design prompt needs high color resolution Direct-to-Garment (DTG) execution or standard flat screen printing setup in one fast short sentence. Prompt: "${prompt}"` }] }] })
-                });
-                const data = await res.json();
-                return data.candidates[0].content.parts[0].text;
-            } catch {
-                return `<span class="text-rose-400 text-xs font-mono">[API Error]</span>`;
-            }
-        }
-
-        async function syncFulfillmentQueue() {
+        function syncFulfillmentQueue() {
             const tbody = document.getElementById('factory-queue-tbody');
             const targetList = JSON.parse(localStorage.getItem('print_orders') || '[]');
 
             if(targetList.length === 0) {
-                tbody.innerHTML = `<tr><td class="p-8 text-slate-500 text-center italic font-mono" colspan="5">No paid order jobs currently queued inside storage indexes.</td></tr>`;
+                tbody.innerHTML = `<tr><td class="p-8 text-slate-500 text-center italic font-mono" colspan="5">No paid orders currently queued inside logistics storage indexes.</td></tr>`;
                 return;
             }
-
-            tbody.innerHTML = `<tr><td class="p-8 text-indigo-400 text-center font-mono animate-pulse" colspan="5">Analyzing incoming order specifications via Gemini model array hubs...</td></tr>`;
             
             let rowAccumulator = "";
-            for(let i=0; i<targetList.length; i++) {
-                const batch = targetList[i];
+            targetList.forEach((batch, i) => {
                 let itemConfigsHtml = "";
-                let aiAssessmentsHtml = "";
-
-                for(let j=0; j<batch.items.length; j++) {
-                    const item = batch.items[j];
+                batch.items.forEach(item => {
                     itemConfigsHtml += `
                         <div class="text-xs text-slate-300 pb-1 mb-1 border-b border-slate-800/50">
                             <span class="text-indigo-400 font-bold font-mono">1x</span> [${item.color}] <br>
                             <span class="text-[10px] text-slate-400 block mt-0.5">Prompt: "${item.prompt}"</span>
                         </div>
                     `;
-                    const aiReport = await queryGeminiApiFulfillment(item.prompt);
-                    aiAssessmentsHtml += `<div class="p-1.5 bg-indigo-950/20 border border-indigo-900/30 rounded text-xs mb-1">${aiReport}</div>`;
-                }
+                });
+
+                // Default empty strings fallback if legacy orders run through system context
+                const safeAddressDisplay = batch.shippingAddress || "No Shipping Metadata Logged";
 
                 rowAccumulator += `
                     <tr class="hover:bg-slate-900/30 align-top">
                         <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${batch.id}<br><span class="text-[10px] text-slate-500 font-sans font-normal block mt-1">${batch.timestamp}</span></td>
                         <td class="p-4">${itemConfigsHtml}</td>
+                        <td class="p-4 max-w-xs text-xs text-slate-300 font-sans leading-relaxed break-words">${safeAddressDisplay}</td>
                         <td class="p-4">
                             <span class="block font-black text-white text-xs">${batch.totalPrice}</span>
                             <span class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-950 border border-slate-800 text-slate-400 rounded block mt-1 w-max">${batch.paymentChannel}</span>
                         </td>
-                        <td class="p-4">${aiAssessmentsHtml}</td>
                         <td class="p-4 text-right">
-                            <button onclick="dispatchOrderBatch(${i})" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/40 px-2.5 py-1.5 rounded-lg hover:bg-emerald-900/40 transition">Fulfill ✓</button>
+                            <button onclick="dispatchOrderBatch(${i})" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/40 px-2.5 py-1.5 rounded-lg hover:bg-emerald-900/40 transition">Fulfill & Ship ✓</button>
                         </td>
                     </tr>
                 `;
-            }
+            });
             tbody.innerHTML = rowAccumulator;
         }
 
