@@ -8,63 +8,44 @@
 </head>
 <body class="bg-slate-950 font-sans text-slate-100 min-h-screen">
 
-    <!-- LOGIN PANEL GATE (NO REGISTER INTERFACE) -->
     <div id="auth-gate-wrapper" class="max-w-md mx-auto pt-28 px-4">
         <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
             <div class="text-center mb-6">
-                <span class="text-indigo-400 text-xs tracking-widest font-mono uppercase font-bold">Authorized Operations Index</span>
-                <h1 class="text-2xl font-black mt-1">Management Login</h1>
+                <span class="text-indigo-400 text-xs tracking-widest font-mono uppercase font-bold">Alpha T-Shirts Factory</span>
+                <h1 class="text-2xl font-bold mt-1">Management Authorization</h1>
             </div>
-
             <form onsubmit="handleAdminLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Operator Username</label>
-                    <input type="text" id="admin-user" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <div>
-                    <label class="block text-xs uppercase font-mono tracking-wider text-slate-400 mb-2">Operator Password</label>
-                    <input type="password" id="admin-pass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm tracking-wide transition mt-2">
-                    Establish Portal Session
-                </button>
+                <input type="text" id="admin-user" placeholder="Username" value="admin" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                <input type="password" id="admin-pass" placeholder="Password" value="admin1208" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold text-sm tracking-wide transition">Access Ingestion Portal</button>
             </form>
-            <p id="auth-error-logs" class="text-xs font-mono text-center mt-4 text-rose-400 hidden"></p>
+            <p id="auth-error" class="text-xs text-rose-400 text-center mt-2 hidden"></p>
         </div>
     </div>
 
-    <!-- PROTECTED PRODUCTION HUB DIAL -->
     <main id="protected-admin-dashboard" class="hidden">
         <nav class="bg-slate-900 border-b border-slate-800 h-16 px-6 flex items-center justify-between shadow-md">
-            <span class="text-sm font-mono tracking-widest bg-slate-950 px-3 py-1 rounded text-indigo-400 border border-slate-800">ALPHA T-SHIRTS PRODUCTION HUB</span>
-            <button onclick="terminateSession()" class="text-xs text-slate-400 hover:text-rose-400 transition font-mono underline underline-offset-4">Sign Out</button>
+            <span class="text-sm font-mono tracking-widest text-indigo-400">ALPHA T-SHIRTS FACTORY OPERATIONS</span>
+            <button onclick="logoutAdmin()" class="text-xs text-slate-400 hover:text-rose-400 font-mono">Sign Out</button>
         </nav>
 
-        <div class="max-w-7xl mx-auto px-6 py-10 space-y-8">
-            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
-                <div>
-                    <h2 class="text-xl font-black">Paid Order Manufacturing Matrix</h2>
-                    <p class="text-xs text-slate-400 mt-1">Live updates showing paid items along with their verified Amazon shipping destination structures.</p>
-                </div>
-                <button onclick="syncFulfillmentQueue()" class="bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-indigo-700 transition font-mono">Sync Local Database</button>
-            </div>
-
-            <!-- MANUFACTURING DATAGRID -->
+        <div class="max-w-7xl mx-auto px-6 py-10 space-y-6">
             <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-950 text-slate-400 font-mono text-[11px] uppercase border-b border-slate-800">
-                                <th class="p-4">Batch Reference ID</th>
-                                <th class="p-4">Fulfillment Garment Build Specs</th>
-                                <th class="p-4">Amazon Logistics Destination Address</th>
-                                <th class="p-4">Finances / Settlement</th>
+                                <th class="p-4">Order ID</th>
+                                <th class="p-4">Total Products</th>
+                                <th class="p-4">Build Specifications</th>
+                                <th class="p-4">Shipping Address</th>
+                                <th class="p-4">Total Amount</th>
                                 <th class="p-4 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="factory-queue-tbody" class="text-sm divide-y divide-slate-800/60">
+                        <tbody id="firebase-orders-tbody" class="text-sm divide-y divide-slate-800/60">
                             <tr>
-                                <td class="p-4 text-slate-500 italic font-mono" colspan="5 text-center">Sync data repositories...</td>
+                                <td class="p-8 text-slate-500 text-center italic font-mono" colspan="6">Loading orders from Firebase...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -73,78 +54,104 @@
         </div>
     </main>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB4LAphbvlDzuccTI9sk1vxKJrR_uyEtQc",
+            authDomain: "alpha-t-shirt-printing.firebaseapp.com",
+            projectId: "alpha-t-shirt-printing",
+            storageBucket: "alpha-t-shirt-printing.firebasestorage.app",
+            messagingSenderId: "813180956672",
+            appId: "1:813180956672:web:a27793d383fc410439e8e5",
+            databaseURL: "https://alpha-t-shirt-printing-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.startRealtimeSync = function() {
+            const ordersRef = ref(database, 'orders');
+            onValue(ordersRef, (snapshot) => {
+                const tbody = document.getElementById('firebase-orders-tbody');
+                const data = snapshot.val();
+
+                if(!data || Object.keys(data).length === 0) {
+                    tbody.innerHTML = `<tr><td class="p-8 text-slate-500 text-center italic font-mono" colspan="6">No live orders from Firebase.</td></tr>`;
+                    return;
+                }
+
+                let rows = "";
+                Object.keys(data).forEach((key) => {
+                    const batch = data[key];
+                    let specsHtml = "";
+                    
+                    if (batch.items && Array.isArray(batch.items)) {
+                        batch.items.forEach(item => {
+                            specsHtml += `
+                                <div class="text-xs text-slate-300 pb-1 mb-1 border-b border-slate-800/40">
+                                    <span class="text-indigo-400 font-bold">[${item.color}]</span> × ${item.quantity || 1} Pcs <br>
+                                    <span class="text-[10px] text-slate-400 italic">"${item.prompt}"</span>
+                                </div>`;
+                        });
+                    }
+
+                    rows += `
+                        <tr class="hover:bg-slate-900/30 align-top">
+                            <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${batch.orderId || key.substring(0, 8)}</td>
+                            <td class="p-4">
+                                <span class="bg-indigo-950 text-indigo-400 border border-indigo-900/60 font-black px-2.5 py-1 rounded text-sm">
+                                    ${batch.totalProducts || 1} Units
+                                </span>
+                            </td>
+                            <td class="p-4">${specsHtml}</td>
+                            <td class="p-4 text-xs text-slate-300 max-w-xs break-words">${batch.shippingAddress || 'No Address'}</td>
+                            <td class="p-4 font-black text-white">${batch.totalPrice || '₹0'}</td>
+                            <td class="p-4 text-right">
+                                <button onclick="deleteFirebaseOrder('${key}')" class="text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-900 px-2.5 py-1 rounded-lg hover:bg-emerald-900/60">Fulfill ✓</button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = rows;
+            }, (error) => {
+                console.error("Firebase error:", error);
+                document.getElementById('firebase-orders-tbody').innerHTML = `<tr><td class="p-4 text-rose-400" colspan="6">Firebase connection error: ${error.message}</td></tr>`;
+            });
+        };
+
+        window.deleteFirebaseOrder = function(key) {
+            if(confirm('Mark this order as fulfilled and remove from queue?')) {
+                remove(ref(database, `orders/${key}`))
+                    .then(() => alert('✅ Order fulfilled and removed!'))
+                    .catch(err => alert('❌ Error: ' + err.message));
+            }
+        };
+    </script>
+
     <script>
         function handleAdminLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('admin-user').value.trim();
-            const p = document.getElementById('admin-pass').value.trim();
-            const err = document.getElementById('auth-error-logs');
-            err.classList.add('hidden');
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+            const errMsg = document.getElementById('auth-error');
 
-            if(u === 'admin' && p === 'admin1208') {
+            if(user === 'admin' && pass === 'admin1208') {
                 document.getElementById('auth-gate-wrapper').classList.add('hidden');
                 document.getElementById('protected-admin-dashboard').classList.remove('hidden');
-                syncFulfillmentQueue();
+                window.startRealtimeSync();
+                errMsg.classList.add('hidden');
             } else {
-                err.textContent = "Access Forbidden: Invalid credential records.";
-                err.classList.remove('hidden');
+                errMsg.textContent = '❌ Invalid credentials';
+                errMsg.classList.remove('hidden');
             }
         }
 
-        function terminateSession() {
+        function logoutAdmin() {
             document.getElementById('protected-admin-dashboard').classList.add('hidden');
             document.getElementById('auth-gate-wrapper').classList.remove('hidden');
-            document.getElementById('admin-user').value = "";
-            document.getElementById('admin-pass').value = "";
-        }
-
-        function syncFulfillmentQueue() {
-            const tbody = document.getElementById('factory-queue-tbody');
-            const targetList = JSON.parse(localStorage.getItem('print_orders') || '[]');
-
-            if(targetList.length === 0) {
-                tbody.innerHTML = `<tr><td class="p-8 text-slate-500 text-center italic font-mono" colspan="5">No paid orders currently queued inside logistics storage indexes.</td></tr>`;
-                return;
-            }
-            
-            let rowAccumulator = "";
-            targetList.forEach((batch, i) => {
-                let itemConfigsHtml = "";
-                batch.items.forEach(item => {
-                    itemConfigsHtml += `
-                        <div class="text-xs text-slate-300 pb-1 mb-1 border-b border-slate-800/50">
-                            <span class="text-indigo-400 font-bold font-mono">1x</span> [${item.color}] <br>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">Prompt: "${item.prompt}"</span>
-                        </div>
-                    `;
-                });
-
-                // Default empty strings fallback if legacy orders run through system context
-                const safeAddressDisplay = batch.shippingAddress || "No Shipping Metadata Logged";
-
-                rowAccumulator += `
-                    <tr class="hover:bg-slate-900/30 align-top">
-                        <td class="p-4 font-mono text-xs text-indigo-400 font-bold">${batch.id}<br><span class="text-[10px] text-slate-500 font-sans font-normal block mt-1">${batch.timestamp}</span></td>
-                        <td class="p-4">${itemConfigsHtml}</td>
-                        <td class="p-4 max-w-xs text-xs text-slate-300 font-sans leading-relaxed break-words">${safeAddressDisplay}</td>
-                        <td class="p-4">
-                            <span class="block font-black text-white text-xs">${batch.totalPrice}</span>
-                            <span class="px-1.5 py-0.5 font-mono text-[10px] bg-slate-950 border border-slate-800 text-slate-400 rounded block mt-1 w-max">${batch.paymentChannel}</span>
-                        </td>
-                        <td class="p-4 text-right">
-                            <button onclick="dispatchOrderBatch(${i})" class="text-xs font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/40 px-2.5 py-1.5 rounded-lg hover:bg-emerald-900/40 transition">Fulfill & Ship ✓</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = rowAccumulator;
-        }
-
-        function dispatchOrderBatch(idx) {
-            const list = JSON.parse(localStorage.getItem('print_orders') || '[]');
-            list.splice(idx, 1);
-            localStorage.setItem('print_orders', JSON.stringify(list));
-            syncFulfillmentQueue();
+            document.getElementById('admin-user').value = "admin";
+            document.getElementById('admin-pass').value = "admin1208";
         }
     </script>
 </body>
